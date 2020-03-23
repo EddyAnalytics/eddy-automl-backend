@@ -1,1 +1,1 @@
-# Eddy Automl - backend
+# Eddy AutoML - Backend
