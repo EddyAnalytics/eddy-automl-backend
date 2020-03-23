@@ -10,5 +10,5 @@ jobs:
       - name: Push Docker image
         run: |
           echo '${{ secrets.CI_REGISTRY_TOKEN }}' | docker login --username eddyanalytics --password-stdin
-          docker push eddyanalytics/eddy-automl-bakckend
+          docker push eddyanalytics/eddy-automl-backend
 
