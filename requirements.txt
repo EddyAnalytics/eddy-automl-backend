@@ -1,0 +1,9 @@
+uwsgi
+requests
+markdown
+django==2.2.10
+django-url-filter
+djangorestframework
+django-crispy-forms
+django-cors-headers
+graphene-django
