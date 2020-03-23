@@ -1,0 +1,14 @@
+name: Continous Integration
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build Docker image
+        run: docker build . -t eddyanalytics/eddy-automl-backend
+      - name: Push Docker image
+        run: |
+          echo '${{ secrets.CI_REGISTRY_TOKEN }}' | docker login --username eddyanalytics --password-stdin
+          docker push eddyanalytics/eddy-automl-bakckend
+
