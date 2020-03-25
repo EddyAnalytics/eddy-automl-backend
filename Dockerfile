@@ -34,9 +34,7 @@ RUN mkdir -p /var/cache/apk \
 
 COPY . .
 
-RUN python3 manage.py collectstatic && \
-    python3 manage.py makemigrations --no-input && \
-    python3 manage.py migrate --no-input
+RUN python3 manage.py collectstatic
 
 EXPOSE 8000
 
