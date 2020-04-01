@@ -1,0 +1,9 @@
+DB_HOST: eddy-automl-db
+DB_NAME: db.mysql
+DB_PASS: eddy-automl
+DB_PORT: "3306"
+DB_TYPE: 'mysql # sqlite or postgres'
+DB_USER: eddy-automl
+DEBUG: "True"
+HOST: bla.com
+SECRET_KEY: secret

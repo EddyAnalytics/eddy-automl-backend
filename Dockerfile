@@ -39,4 +39,4 @@ RUN python3 manage.py collectstatic
 EXPOSE 8000
 
 ENTRYPOINT ["./docker-entrypoint.sh"]
-CMD ["app"]
+CMD ["dev"]

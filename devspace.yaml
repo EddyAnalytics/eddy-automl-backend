@@ -1,0 +1,48 @@
+version: v1beta8
+images:
+  default:
+    image: dre97/eddyautomlbackend
+deployments:
+- name: eddy-automl-backend
+  helm:
+    componentChart: true
+    values:
+      containers:
+      - image: dre97/eddyautomlbackend
+        env:
+        - name: DB_HOST
+          value: eddy-automl-db
+        - name: DB_NAME
+          value: db.mysql
+        - name: DB_PASS
+          value: eddy-automl
+        - name: DB_PORT
+          value: "3306"
+        - name: DB_TYPE
+          value: 'mysql # sqlite or postgres'
+        - name: DB_USER
+          value: eddy-automl
+        - name: DEBUG
+          value: "True"
+        - name: HOST
+          value: bla.com
+        - name: SECRET_KEY
+          value: secret
+        - name: MODE
+          value: dev
+      service:
+        ports:
+        - port: 8000
+dev:
+  ports:
+  - imageName: default
+    forward:
+    - port: 8000
+  open:
+  - url: http://localhost:8000
+  sync:
+  - imageName: default
+    excludePaths:
+    - db.sqlite3
+    - static
+    - devspace.yaml
