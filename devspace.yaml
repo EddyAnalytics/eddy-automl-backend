@@ -3,6 +3,15 @@ images:
   default:
     image: dre97/eddyautomlbackend
 deployments:
+- name: database
+  helm:
+    chart:
+      name: stable/postgresql
+      version: "6.5.9"
+    values:
+      postgresqlDatabase: "db_mysite"
+      postgresqlUsername: "db_user"
+      postgresqlPassword: ${DB_PASSWORD}
 - name: eddy-automl-backend
   helm:
     componentChart: true
@@ -28,8 +37,6 @@ deployments:
           value: bla.com
         - name: SECRET_KEY
           value: secret
-        - name: MODE
-          value: dev
       service:
         ports:
         - port: 8000
