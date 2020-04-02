@@ -6,12 +6,12 @@ deployments:
 - name: database
   helm:
     chart:
-      name: stable/postgresql
-      version: "6.5.9"
+      name: stable/mysql
     values:
-      postgresqlDatabase: "db_mysite"
-      postgresqlUsername: "db_user"
-      postgresqlPassword: ${DB_PASSWORD}
+      mysqlRootPassword: very-secure-root-password
+      mysqlPassowrd: eddy-automl
+      mysqlDatabase: eddy-automl-db
+      mysqlUser: eddy-automl
 - name: eddy-automl-backend
   helm:
     componentChart: true
