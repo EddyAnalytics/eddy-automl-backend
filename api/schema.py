@@ -1,8 +1,18 @@
 import graphene
+from graphene import ObjectType, String, Schema
 
 
-class Query(graphene.ObjectType):
-   pass
+class Query(ObjectType):
+    pass
 
 
-schema = graphene.Schema(query=Query)
+class Mutations(ObjectType):
+    pass
+
+    class StartAutoML(graphene.Mutation):
+        class Arguments:
+            input_topic = graphene.String()
+            output_topic = graphene.String()
+
+
+schema = Schema(query=Query, mutation=Mutations)

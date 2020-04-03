@@ -1,24 +1,60 @@
 version: v1beta8
 images:
+  broker:
+    image: wurstmeister/kafka
+    tags:
+    - latest
+    createPullSecret: true
+    build:
+      disabled: true
   default:
     image: dre97/eddyautomlbackend
+  zookeeper:
+    image: zookeeper
+    tags:
+    - latest
+    createPullSecret: true
+    build:
+      disabled: true
 deployments:
+- name: zookeeper
+  helm:
+    componentChart: true
+    values:
+      containers:
+      - image: zookeeper
+      service:
+        ports:
+        - port: 2181
+- name: broker
+  helm:
+    componentChart: true
+    values:
+      containers:
+      - image: wurstmeister/kafka
+        env:
+        - name: KAFKA_ZOOKEEPER_CONNECT
+          value: zookeeper:2181
+        - name: KAFKA_ADVERTISED_HOST_NAME
+          value: localhost
+      service:
+        ports:
+        - port: 9094
 - name: database
   helm:
     chart:
       name: stable/mysql
     values:
-      mysqlRootPassword: very-secure-root-password
-      mysqlPassowrd: eddy-automl
       mysqlDatabase: eddy-automl-db
+      mysqlPassowrd: eddy-automl
+      mysqlRootPassword: very-secure-root-password
       mysqlUser: eddy-automl
 - name: eddy-automl-backend
   helm:
     componentChart: true
     values:
       containers:
-      - image: dre97/eddyautomlbackend
-        env:
+      - env:
         - name: DB_HOST
           value: eddy-automl-db
         - name: DB_NAME
@@ -37,6 +73,7 @@ deployments:
           value: bla.com
         - name: SECRET_KEY
           value: secret
+        image: dre97/eddyautomlbackend
       service:
         ports:
         - port: 8000
