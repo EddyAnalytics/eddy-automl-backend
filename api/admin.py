@@ -1,6 +1,6 @@
 from django.contrib import admin
 
 # Register your models here.
-from api.models import ML_job
+from api.models import AutoMLJob
 
-admin.site.register(ML_job)
+admin.site.register(AutoMLJob)
