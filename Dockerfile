@@ -5,7 +5,7 @@ ARG TZ=Europe/Amsterdam
 
 WORKDIR /usr/src/app
 
-RUN apk add --update --no-cache python3 mailcap && \
+RUN apk add --update --no-cache python3 mailcap mariadb-connector-c-dev && \
     find / -type d -name __pycache__ -exec rm -r {} +
 #    rm -r /usr/lib/python*/ensurepip                    && \
 #    rm -r /usr/lib/python*/lib2to3                      && \
