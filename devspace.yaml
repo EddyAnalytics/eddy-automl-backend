@@ -4,17 +4,20 @@ images:
     image: eddyanalytics/eddy-automl-backend
     cmd: ['dev']
   zookeeper:
-    image: confluentinc/cp-zookeeper
+    image: zookeeper
     tags:
-      - 5.3.1
+    - latest
+    createPullSecret: true
     build:
       disabled: true
   broker:
-    image: confluentinc/cp-enterprise-kafka
+    image: wurstmeister/kafka
     tags:
-      - 5.3.1
+    - latest
+    createPullSecret: true
     build:
       disabled: true
+      
 deployments:
 - name: zookeeper
   helm:
@@ -30,14 +33,12 @@ deployments:
     componentChart: true
     values:
       containers:
-      - image: broker
+      - image: wurstmeister/kafka
         env:
         - name: KAFKA_ZOOKEEPER_CONNECT
           value: zookeeper:2181
-        - name: KAFKA_LISTENER_SECURITY_PROTOCOL_MAP
-          value: PLAINTEXT:PLAINTEXT,HOST:PLAINTEXT
-        - name: KAFKA_ADVERTISED_LISTENERS
-          value: PLAINTEXT://broker:29092,HOST://localhost:9092
+        - name: KAFKA_ADVERTISED_HOST_NAME
+          value: broker
       service:
         ports:
         - port: 9092
@@ -78,6 +79,7 @@ deployments:
       service:
         ports:
         - port: 8000
+
 dev:
   ports:
   - imageName: app
