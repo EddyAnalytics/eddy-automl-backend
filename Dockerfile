@@ -5,36 +5,15 @@ ARG TZ=Europe/Amsterdam
 
 WORKDIR /usr/src/app
 
-RUN apk add --update --no-cache python3 mailcap mariadb-connector-c-dev && \
-    find / -type d -name __pycache__ -exec rm -r {} +
-#    rm -r /usr/lib/python*/ensurepip                    && \
-#    rm -r /usr/lib/python*/lib2to3                      && \
-#    rm -r /usr/lib/python*/turtledemo                   && \
-#    rm /usr/lib/python*/turtle.py                       && \
-#    rm /usr/lib/python*/webbrowser.py                   && \
-#    rm /usr/lib/python*/doctest.py                      && \
-#    rm /usr/lib/python*/pydoc.py                        && \
-#    rm -rf /root/.cache /var/cache /usr/share/terminfo
+RUN apk add python3 python3-dev mysql mysql-client mysql-dev gcc g++ musl-dev linux-headers tzdata
 
 COPY requirements.txt .
 
-RUN mkdir -p /var/cache/apk \
-    && apk add --update --no-cache --virtual .build-deps \
-		gcc \
-		g++ \
-		musl-dev \
-        python3-dev \
-        linux-headers \
-        tzdata \
-	&& cp /usr/share/zoneinfo/$TZ /etc/localtime \
-    && echo $TZ > /etc/timezone \
-    && pip3 --no-cache-dir install -r requirements.txt \
-    && apk --no-cache del .build-deps \
-    && rm -r /var/cache
+RUN pip3 install --upgrade pip
+
+RUN pip3 install -r requirements.txt
 
 COPY . .
-
-RUN python3 manage.py collectstatic
 
 EXPOSE 8000
 
