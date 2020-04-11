@@ -1,0 +1,92 @@
+version: v1beta8
+images:
+  app:
+    image: eddyanalytics/eddy-automl-backend
+    cmd: ['dev']
+  zookeeper:
+    image: confluentinc/cp-zookeeper
+    tags:
+      - 5.3.1
+    build:
+      disabled: true
+  broker:
+    image: confluentinc/cp-enterprise-kafka
+    tags:
+      - 5.3.1
+    build:
+      disabled: true
+deployments:
+- name: zookeeper
+  helm:
+    componentChart: true
+    values:
+      containers:
+      - image: zookeeper
+      service:
+        ports:
+        - port: 2181
+- name: broker
+  helm:
+    componentChart: true
+    values:
+      containers:
+      - image: broker
+        env:
+        - name: KAFKA_ZOOKEEPER_CONNECT
+          value: zookeeper:2181
+        - name: KAFKA_LISTENER_SECURITY_PROTOCOL_MAP
+          value: PLAINTEXT:PLAINTEXT,HOST:PLAINTEXT
+        - name: KAFKA_ADVERTISED_LISTENERS
+          value: PLAINTEXT://broker:29092,HOST://localhost:9092
+      service:
+        ports:
+        - port: 9092
+- name: database
+  helm:
+    chart:
+      name: stable/mysql
+    values:
+      mysqlDatabase: eddy-automl-db
+      mysqlPassword: eddy-automl
+      mysqlRootPassword: very-secure-root-password
+      mysqlUser: eddy-automl
+- name: eddy-automl-backend
+  helm:
+    componentChart: true
+    values:
+      containers:
+      - env:
+        - name: DB_HOST
+          value: database-mysql
+        - name: DB_NAME
+          value: eddy-automl-db
+        - name: DB_PASS
+          value: very-secure-root-password
+        - name: DB_PORT
+          value: "3306"
+        - name: DB_TYPE
+          value: 'mysql'
+        - name: DB_USER
+          value: root
+        - name: DEBUG
+          value: "True"
+        - name: HOST
+          value: bla.com
+        - name: SECRET_KEY
+          value: secret
+        image: eddyanalytics/eddy-automl-backend
+      service:
+        ports:
+        - port: 8000
+dev:
+  ports:
+  - imageName: app
+    forward:
+    - port: 8000
+  open:
+  - url: http://localhost:8000
+  sync:
+  - imageName: app
+    excludePaths:
+    - static
+    - devspace.yaml
