@@ -1,5 +1,5 @@
 import graphene
-from graphene import ObjectType, String, Schema
+from graphene import ObjectType
 from graphene_django import DjangoObjectType
 
 from api.models import AutoMLJob
@@ -8,6 +8,14 @@ from api.models import AutoMLJob
 class AutoMLType(DjangoObjectType):
     class Meta:
         model = AutoMLJob
+
+
+class ListJobs(ObjectType):
+    jobs = graphene.List(AutoMLType)
+
+    def resolve_jobs(self, info):
+        user = info.context.user
+        return AutoMLJob.objects.all().filter(user=user)
 
 
 class CreateAutoMLJob(graphene.Mutation):
@@ -28,16 +36,5 @@ class CreateAutoMLJob(graphene.Mutation):
         return CreateAutoMLJob(job=job)
 
 
-class Queries(ObjectType):
-    jobs = graphene.List(AutoMLType)
-
-    def resolve_jobs(self, info):
-        user = info.context.user
-        return AutoMLJob.objects.all().filter(user=user)
-
-
-class Mutations(ObjectType):
-    CreateAutoMLJob = CreateAutoMLJob.Field()
-
-
-schema = Schema(query=Queries, mutation=Mutations)
+query_list = [ListJobs]
+mutation_list = [CreateAutoMLJob]

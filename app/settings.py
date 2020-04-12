@@ -35,7 +35,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'graphene_django',
-    'api'
+    'api',
+    'authentication'
 ]
 
 MIDDLEWARE = [
@@ -50,7 +51,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 ROOT_URLCONF = 'app.urls'
-
 
 TEMPLATES = [
     {
@@ -71,15 +71,15 @@ TEMPLATES = [
 WSGI_APPLICATION = 'app.wsgi.application'
 
 DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'NAME': os.environ.get('DB_NAME', 'eddy-automl'),
-            'USER': os.environ.get('DB_USER', 'eddy-automl'),
-            'PASSWORD': os.environ.get('DB_PASS'),
-            'HOST': os.environ.get('DB_HOST'),
-            'PORT': os.environ.get('DB_PORT'),
-        }
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.environ.get('DB_NAME', 'eddy-automl'),
+        'USER': os.environ.get('DB_USER', 'eddy-automl'),
+        'PASSWORD': os.environ.get('DB_PASS', 'eddy-automl'),
+        'HOST': os.environ.get('DB_HOST', 'localhost'),
+        'PORT': os.environ.get('DB_PORT', '3306'),
     }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
@@ -131,8 +131,10 @@ REST_FRAMEWORK = {
 }
 
 GRAPHENE = {
-    'SCHEMA': 'api.schema.schema'
+    'SCHEMA': 'schema.schema'
 }
 
 # Cors
 CORS_ORIGIN_ALLOW_ALL = True
+
+AUTH_USER_MODEL = 'authentication.User'
