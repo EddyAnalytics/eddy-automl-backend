@@ -1,5 +1,4 @@
 import graphene
-from django.contrib.auth.models import AbstractUser
 from graphene import ObjectType, String, Schema
 from graphene_django import DjangoObjectType
 

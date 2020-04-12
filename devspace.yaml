@@ -75,6 +75,8 @@ deployments:
           value: bla.com
         - name: SECRET_KEY
           value: secret
+        - name: NAMESPACE
+          value: minikube
         image: eddyanalytics/eddy-automl-backend
       service:
         ports:

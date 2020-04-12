@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: autoML
+  labels:
+    app: autoML
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: autoML
+  template:
+    metadata:
+      labels:
+        app: autoML
+    spec:
+      containers:
+      - name: eddy-automl
+        image: eddyanalytics/eddy-automl
+        ports:
+        - containerPort: 8888
