@@ -96,10 +96,6 @@ pip-delete-this-directory.txt
 nosetests.xml
 coverage.xml
 
-# Translations
-api/db.sqlite3
-
-
 # Created by https://www.gitignore.io/api/jetbrains+all
 # Edit at https://www.gitignore.io/?templates=jetbrains+all
 

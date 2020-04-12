@@ -1,14 +1,8 @@
 version: v1beta8
 images:
-  broker:
-    image: wurstmeister/kafka
-    tags:
-    - latest
-    createPullSecret: true
-    build:
-      disabled: true
-  default:
-    image: dre97/eddyautomlbackend
+  app:
+    image: eddyanalytics/eddy-automl-backend
+    cmd: ['dev']
   zookeeper:
     image: zookeeper
     tags:
@@ -16,6 +10,14 @@ images:
     createPullSecret: true
     build:
       disabled: true
+  broker:
+    image: wurstmeister/kafka
+    tags:
+    - latest
+    createPullSecret: true
+    build:
+      disabled: true
+      
 deployments:
 - name: zookeeper
   helm:
@@ -36,17 +38,17 @@ deployments:
         - name: KAFKA_ZOOKEEPER_CONNECT
           value: zookeeper:2181
         - name: KAFKA_ADVERTISED_HOST_NAME
-          value: localhost
+          value: broker
       service:
         ports:
-        - port: 9094
+        - port: 9092
 - name: database
   helm:
     chart:
       name: stable/mysql
     values:
       mysqlDatabase: eddy-automl-db
-      mysqlPassowrd: eddy-automl
+      mysqlPassword: eddy-automl
       mysqlRootPassword: very-secure-root-password
       mysqlUser: eddy-automl
 - name: eddy-automl-backend
@@ -56,7 +58,7 @@ deployments:
       containers:
       - env:
         - name: DB_HOST
-          value: 10.103.247.67
+          value: database-mysql
         - name: DB_NAME
           value: eddy-automl-db
         - name: DB_PASS
@@ -73,20 +75,20 @@ deployments:
           value: bla.com
         - name: SECRET_KEY
           value: secret
-        image: dre97/eddyautomlbackend
+        image: eddyanalytics/eddy-automl-backend
       service:
         ports:
         - port: 8000
+
 dev:
   ports:
-  - imageName: default
+  - imageName: app
     forward:
     - port: 8000
   open:
   - url: http://localhost:8000
   sync:
-  - imageName: default
+  - imageName: app
     excludePaths:
-    - db.sqlite3
     - static
     - devspace.yaml
