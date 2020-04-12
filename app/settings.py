@@ -24,6 +24,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'tvzg%ezj0prf=7)&x%_abyp=a^2d*rn=6*2-x
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True if os.environ.get('DEBUG', default='False') == 'True' else False
 ALLOWED_HOSTS = ['127.0.0.1', '172.17.0.1', 'localhost']
+CORS_ORIGIN_ALLOW_ALL = True
 
 # Application definition
 
@@ -133,8 +134,5 @@ REST_FRAMEWORK = {
 GRAPHENE = {
     'SCHEMA': 'schema.schema'
 }
-
-# Cors
-CORS_ORIGIN_ALLOW_ALL = True
 
 AUTH_USER_MODEL = 'authentication.User'
