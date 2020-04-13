@@ -10,10 +10,11 @@ class AutoMLType(DjangoObjectType):
         model = AutoMLJob
 
 
-class ListJobs(ObjectType):
-    jobs = graphene.List(AutoMLType)
+class JobQuery(ObjectType):
+    user_jobs = graphene.List(AutoMLType)
 
-    def resolve_jobs(self, info):
+    @classmethod
+    def resolve_user_jobs(cls, root, info, **kwargs):
         user = info.context.user
         return AutoMLJob.objects.all().filter(user=user)
 
@@ -26,7 +27,8 @@ class CreateAutoMLJob(graphene.Mutation):
 
     job = graphene.Field(AutoMLType)
 
-    def mutate(self, info, input_topic, output_topic, target_column):
+    @classmethod
+    def mutate(cls, root, info, input_topic, output_topic, target_column):
         user = info.context.user
         job = AutoMLJob.objects.create(user=user,
                                        input_topic=input_topic,
@@ -36,5 +38,9 @@ class CreateAutoMLJob(graphene.Mutation):
         return CreateAutoMLJob(job=job)
 
 
-query_list = [ListJobs]
-mutation_list = [CreateAutoMLJob]
+class JobMutation(object):
+    create_automl_job = CreateAutoMLJob.Field()
+
+
+query_list = [JobQuery]
+mutation_list = [JobMutation]

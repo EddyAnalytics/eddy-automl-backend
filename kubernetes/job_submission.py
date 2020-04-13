@@ -29,7 +29,7 @@ def create_pod(api_instance, pod):
     api_response = api_instance.create_namespaced_pod(
         body=pod,
         namespace=namespace)
-    print("Deployment created. status='%s'" % str(api_response.status))
+    return api_response
 
 
 def execute_autoMLJob():
