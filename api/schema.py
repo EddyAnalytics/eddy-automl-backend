@@ -3,7 +3,7 @@ from graphene import ObjectType, relay
 from graphene_django import DjangoObjectType
 from graphene_django.filter import DjangoFilterConnectionField
 
-from api.models import AutoMLJob
+from api.models import AutoMLJob, JobStatus
 
 
 class AutoMLType(DjangoObjectType):
@@ -28,16 +28,19 @@ class CreateAutoMLJob(graphene.Mutation):
         input_topic = graphene.String(required=True)
         output_topic = graphene.String(required=True)
         target_column = graphene.String(required=True)
+        name = graphene.String(required=True)
 
     job = graphene.Field(AutoMLType)
 
     @classmethod
-    def mutate(cls, root, info, input_topic, output_topic, target_column):
+    def mutate(cls, root, info, input_topic, output_topic, target_column, name):
         user = info.context.user
         job = AutoMLJob.objects.create(user=user,
                                        input_topic=input_topic,
                                        output_topic=output_topic,
-                                       target_column=target_column)
+                                       target_column=target_column,
+                                       name=name,
+                                       status=JobStatus.RUNNING) # TODO edit such that it reflects actual job state
         job.save()
         return CreateAutoMLJob(job=job)
 
