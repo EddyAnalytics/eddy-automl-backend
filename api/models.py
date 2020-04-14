@@ -28,11 +28,14 @@ class AutoMLJob(models.Model):
     status = models.IntegerField(choices=JobStatus.choices())
 
     @classmethod
-    def create(cls, user, input_topic, output_topic, target_column):
+    def create(cls, user, input_topic, output_topic, target_column, name, status):
         job = cls(user=user,
                   input_topic=input_topic,
                   output_topic=output_topic,
-                  target_column=target_column)
+                  target_column=target_column,
+                  name=name,
+                  status=status
+        )
         return job
 
 
