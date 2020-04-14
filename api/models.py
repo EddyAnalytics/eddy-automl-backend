@@ -23,7 +23,7 @@ class AutoMLJob(models.Model):
     output_topic = models.CharField(max_length=100)
     target_column = models.CharField(max_length=100)
 
-    name = models.CharField(max_length=100)
+    job_name = models.CharField(max_length=100)
 
     status = models.IntegerField(choices=JobStatus.choices())
 
@@ -33,7 +33,7 @@ class AutoMLJob(models.Model):
                   input_topic=input_topic,
                   output_topic=output_topic,
                   target_column=target_column,
-                  name=name,
+                  job_name=name,
                   status=status
         )
         return job
