@@ -1,6 +1,7 @@
 import graphene
-from graphene import ObjectType
+from graphene import ObjectType, relay
 from graphene_django import DjangoObjectType
+from graphene_django.filter import DjangoFilterConnectionField
 
 from api.models import AutoMLJob
 
@@ -8,10 +9,13 @@ from api.models import AutoMLJob
 class AutoMLType(DjangoObjectType):
     class Meta:
         model = AutoMLJob
+        filter_fields = ['id']
+        interfaces = (relay.Node,)
 
 
 class JobQuery(ObjectType):
-    user_jobs = graphene.List(AutoMLType)
+    job = relay.Node.Field(AutoMLType)
+    user_jobs = DjangoFilterConnectionField(AutoMLType)
 
     @classmethod
     def resolve_user_jobs(cls, root, info, **kwargs):
