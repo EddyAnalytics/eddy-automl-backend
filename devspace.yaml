@@ -73,6 +73,8 @@ deployments:
           value: secret
         - name: NAMESPACE
           value: minikube
+        - name: KAFKA-ADDR
+          value: broker:9092
         image: eddyanalytics/eddy-automl-backend
       service:
         ports:
