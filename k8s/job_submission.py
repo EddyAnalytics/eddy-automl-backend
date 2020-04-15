@@ -1,10 +1,7 @@
-import os
-
 from kubernetes import config, client
-from kubernetes.client import V1EnvVar, V1ExecAction
+from kubernetes.client import V1EnvVar
 
-namespace = os.environ.get("NAMESPACE")
-kafka_address = os.environ.get("KAFKA-ADDR")
+from k8s.util import namespace, kafka_address
 
 
 class KubernetesAutoMLJob:
@@ -47,20 +44,3 @@ class KubernetesAutoMLJob:
             namespace=namespace)
         self.pod_name = api_response.metadata.name
         return api_response
-
-    # def start_AutoML_job(self):
-    #     self.client.connect_get_namespaced_pod_exec(
-    #         name=self.pod_name,
-    #         namespace=namespace,
-    #         command="python main.py {i} {o} {c}".format(
-    #             i=self.input_topic,
-    #             o=self.output_topic,
-    #             c=self.target_col
-    #         )
-    #     )
-
-
-job = KubernetesAutoMLJob("asdf3", "asdf4", 0)
-job.start_pod()
-print(job.pod_name)
-# job.start_AutoML_job()
