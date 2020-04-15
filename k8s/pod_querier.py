@@ -1,12 +1,11 @@
 from kubernetes import config, client
 
-from k8s.util import namespace, JobStatus
+from k8s.util import namespace, JobStatus, PodOperator
 
 
-class PodQuerier:
+class PodQuerier(PodOperator):
     def __init__(self, pod_name: str):
-        config.load_incluster_config()
-        self.client = client.CoreV1Api()
+        super().__init__()
         self.pod_name = pod_name
 
     def query_status_update(self, curr_status: JobStatus) -> JobStatus:

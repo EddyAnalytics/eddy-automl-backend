@@ -1,14 +1,13 @@
 from kubernetes import config, client
 from kubernetes.client import V1EnvVar
 
-from k8s.util import namespace, kafka_address
+from k8s.util import namespace, kafka_address, PodOperator
 
 
-class KubernetesAutoMLJob:
+class KubernetesAutoMLJob(PodOperator):
 
     def __init__(self, input_topic: str, output_topic: str, target_col: int):
-        config.load_incluster_config()
-        self.client = client.CoreV1Api()
+        super().__init__()
         self.input_topic = input_topic
         self.output_topic = output_topic
         self.target_col = target_col
