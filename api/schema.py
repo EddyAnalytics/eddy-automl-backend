@@ -7,7 +7,7 @@ from graphql_jwt.decorators import login_required
 from api.models import AutoMLJob
 from k8s.pod_querier import PodQuerier
 from k8s.util import JobStatus
-from k8s.job_submission import KubernetesAutoMLJob
+from k8s.pod_starter import KubernetesAutoMLJob
 
 
 class AutoMLType(DjangoObjectType):
@@ -26,6 +26,16 @@ class JobQuery(ObjectType):
     @login_required
     def resolve_user_jobs(cls, root, info, **kwargs):
         user = info.context.user
+        jobs = AutoMLJob.objects.all().filter(user=user)
+        # print("checking for job updates")
+        for job in jobs:
+            # print(job.status)
+            if job.status in {JobStatus.WAITING.value, JobStatus.RUNNING.value}:
+                if job.pod_name is None:
+                    job.delete()
+                    continue
+                job.status = PodQuerier(job.pod_name).query_status_update(job.status)
+                job.save()
         return AutoMLJob.objects.all().filter(user=user)
 
 
@@ -52,11 +62,10 @@ class CreateAutoMLJob(graphene.Mutation):
                                        output_topic=output_topic,
                                        target_column=target_column,
                                        job_name=name,
-                                       status=JobStatus.WAITING.value
+                                       status=JobStatus.WAITING.value,
                                        )  # TODO edit such that it reflects actual job state
         kube_job.start_pod()
         job.pod_name = kube_job.pod_name
-        job.status = PodQuerier(kube_job.pod_name).query_status_update(job.status).value
         job.save()
         return CreateAutoMLJob(job=job)
 

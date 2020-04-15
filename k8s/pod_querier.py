@@ -27,3 +27,5 @@ class PodQuerier:
                 return JobStatus.FAILED
             else:
                 return curr_status
+        else:
+            return JobStatus.FAILED
