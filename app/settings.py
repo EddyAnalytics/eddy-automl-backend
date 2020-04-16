@@ -22,9 +22,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = os.environ.get('SECRET_KEY', 'tvzg%ezj0prf=7)&x%_abyp=a^2d*rn=6*2-x1gq5t075hkw9y')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True if os.environ.get('DEBUG', default='False') == 'True' else False
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', default='*').split(',')
-USE_X_FORWARDED_HOST = True if os.environ.get('USE_X_FORWARDED_HOST', default='True') == 'True' else False
+DEBUG = True if os.environ.get('DEBUG', 'False') == 'True' else False
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS_LIST', '*').split(',')
+USE_X_FORWARDED_HOST = True if os.environ.get('USE_X_FORWARDED_HOST', 'True') == 'True' else False
 CORS_ORIGIN_ALLOW_ALL = True
 
 # Application definition
