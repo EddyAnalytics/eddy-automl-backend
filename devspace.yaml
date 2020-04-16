@@ -71,9 +71,9 @@ deployments:
           value: "True"
         - name: SECRET_KEY
           value: secret
-        - name: NAMESPACE
-          value: minikube
-        - name: KAFKA-ADDR
+        - name: JOB_NAMESPACE
+          value: eddy-automl-jobs
+        - name: KAFKA_BOOTSTRAP_SERVER
           value: broker:9092
         image: eddyanalytics/eddy-automl-backend
       service:

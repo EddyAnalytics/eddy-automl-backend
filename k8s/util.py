@@ -3,8 +3,8 @@ from enum import Enum
 
 from kubernetes import config, client
 
-namespace = os.environ.get("NAMESPACE")
-kafka_address = os.environ.get("KAFKA-ADDR")
+namespace = os.environ.get("JOBS_NAMESPACE")
+kafka_address = os.environ.get("KAFKA_BOOTSTRAP_SERVER")
 
 
 class JobStatus(Enum):
