@@ -57,21 +57,21 @@ deployments:
     values:
       containers:
       - env:
-        - name: DB_HOST
-          value: database-mysql
-        - name: DB_PORT
-          value: "3306"
-        - name: DB_NAME
-          value: eddy-automl-db
-        - name: DB_PASS
-          value: very-secure-root-password
-        - name: DB_USER
-          value: root
         - name: DEBUG
           value: "True"
         - name: SECRET_KEY
           value: secret
-        - name: JOB_NAMESPACE
+        - name: DB_NAME
+          value: eddy-automl-db
+        - name: DB_USER
+          value: root
+        - name: DB_PASS
+          value: very-secure-root-password
+        - name: DB_HOST
+          value: database-mysql
+        - name: DB_PORT
+          value: "3306"
+        - name: JOBS_NAMESPACE
           value: eddy-automl-jobs
         - name: KAFKA_BOOTSTRAP_SERVER
           value: broker:9092
