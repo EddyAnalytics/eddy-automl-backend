@@ -1,4 +1,6 @@
-from k8s.util import PodOperator, namespace, JobStatus
+from kubernetes.client.rest import ApiException
+
+from k8s.util import PodOperator, namespace
 
 
 class PodStopper(PodOperator):
@@ -6,9 +8,12 @@ class PodStopper(PodOperator):
         super().__init__()
         self.pod_name = pod_name
 
-    def stop_pod(self):
-        self.client.delete_namespaced_pod(
-            name=self.pod_name,
-            namespace=namespace
-        )
-        return JobStatus.STOPPED
+    def stop_pod(self) -> str:
+        try:
+            self.client.delete_namespaced_pod(
+                name=self.pod_name,
+                namespace=namespace
+            )
+        except ApiException:
+            return "FAILED"
+        return "SUCCESS"

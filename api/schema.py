@@ -20,6 +20,11 @@ class AutoMLType(DjangoObjectType):
         convert_choices_to_enum = False
 
 
+class StatusEnum(graphene.Enum):
+    SUCCESS = 1
+    FAILED = 0
+
+
 class JobQuery(ObjectType):
     job = relay.Node.Field(AutoMLType)
     user_jobs = DjangoFilterConnectionField(AutoMLType)
@@ -84,14 +89,39 @@ class StopAutoMLJob(graphene.Mutation):
             user=user,
             id=from_global_id(job_id)[1]
         )
-        job.status = PodStopper(job.pod_name).stop_pod().value
+        PodStopper(job.pod_name).stop_pod()
+        job.status = JobStatus.STOPPED
         job.save()
         return StopAutoMLJob(job=job)
+
+
+class DeleteAutoMLJob(graphene.Mutation):
+    class Arguments:
+        job_id = graphene.String(required=True)
+
+    status = StatusEnum()
+    info = graphene.String()
+
+    @classmethod
+    @login_required
+    def mutate(cls, root, info, job_id):
+        user = info.context.user
+        job = AutoMLJob.objects.all().get(
+            user=user,
+            id=from_global_id(job_id)[1]
+        )
+        stop_status = PodStopper(job.pod_name).stop_pod()
+        job.delete()
+        if stop_status == "FAILED":
+            return DeleteAutoMLJob(status=StatusEnum.FAILED, info="Pod not found on cluster, model has been deleted")
+        else:
+            return DeleteAutoMLJob(status=StatusEnum.SUCCESS, info="Pod and model succesfully deleted")
 
 
 class JobMutation(object):
     create_automl_job = CreateAutoMLJob.Field()
     stop_automl_job = StopAutoMLJob.Field()
+    delete_automl_job = DeleteAutoMLJob.Field()
 
 
 query_list = [JobQuery]
