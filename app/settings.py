@@ -24,6 +24,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'tvzg%ezj0prf=7)&x%_abyp=a^2d*rn=6*2-x
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True if os.environ.get('DEBUG', default='False') == 'True' else False
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', default='*')
+USE_X_FORWARDED_HOST = os.environ.get('USE_X_FORWARDED_HOST', default=True)
 CORS_ORIGIN_ALLOW_ALL = False
 
 # Application definition
