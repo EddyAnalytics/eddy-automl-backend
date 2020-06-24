@@ -5,6 +5,23 @@ from k8s.util import namespace, kafka_address, PodOperator
 
 
 class KubernetesAutoMLJob(PodOperator):
+    # pod config
+
+    pod = client.V1Pod(
+        kind="Pod",
+        spec=client.V1PodSpec(containers=[client.V1Container(
+            name="eddy-automl",
+            image="eddyanalytics/eddy-automl",
+            ports=[client.V1ContainerPort(container_port=8888)],
+            env=[V1EnvVar("BOOTSTRAP_SERVER", kafka_address)],
+            command=["python", "main.py"]
+            # args=... to be added
+        )]),
+        metadata=client.V1ObjectMeta(
+            generate_name="automl-",
+            namespace=namespace
+        )
+    )
 
     def __init__(self, input_topic: str, output_topic: str, target_col: int):
         super().__init__()
@@ -15,25 +32,8 @@ class KubernetesAutoMLJob(PodOperator):
 
     def create_pod_object(self):
         config.load_incluster_config()
-        container = client.V1Container(
-            name="eddy-automl",
-            image="eddyanalytics/eddy-automl",
-            ports=[client.V1ContainerPort(container_port=8888)],
-            env=[V1EnvVar("BOOTSTRAP_SERVER", kafka_address)],
-            command=["python", "main.py"],
-            args=[self.input_topic, self.output_topic, str(self.target_col)]
-        )
-        spec = client.V1PodSpec(containers=[container])
-        metadata = client.V1ObjectMeta(
-            generate_name="automl-",
-            namespace=namespace
-        )
-        # Instantiate the deployment object
-        pod = client.V1Pod(
-            kind="Pod",
-            spec=spec,
-            metadata=metadata
-        )
+        pod = self.pod
+        pod.spec.containers[0].args = [self.input_topic, self.output_topic, str(self.target_col)]
         return pod
 
     def start_pod(self):
