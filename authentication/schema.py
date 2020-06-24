@@ -14,6 +14,21 @@ class UserType(DjangoObjectType):
                    'groups', 'user_permisisons')
 
 
+def verify_user(info, kwargs):
+    if not isinstance(info.context.user, User):
+        raise UnauthorizedException()
+
+    try:
+        user = User.objects.get(pk=kwargs.get('id'))
+    except User.DoesNotExist:
+        raise NotFoundException()
+
+    if not info.context.user.is_superuser:
+        if user != info.context.user:
+            raise ForbiddenException()
+    return user
+
+
 class UserQuery(graphene.ObjectType):
     """
     A normal user can only query itself.
@@ -23,19 +38,7 @@ class UserQuery(graphene.ObjectType):
 
     @classmethod
     def resolve_user(cls, root, info, **kwargs):
-        if not isinstance(info.context.user, User):
-            raise UnauthorizedException()
-
-        try:
-            user = User.objects.get(pk=kwargs.get('id'))
-        except User.DoesNotExist:
-            raise NotFoundException()
-
-        if not info.context.user.is_superuser:
-            if user != info.context.user:
-                raise ForbiddenException()
-
-        return user
+        return verify_user(info, kwargs)
 
     """
     A normal user can only query itself.
@@ -113,17 +116,7 @@ class UpdateUser(graphene.Mutation):
 
     @classmethod
     def mutate(cls, root, info, **kwargs):
-        if not isinstance(info.context.user, User):
-            raise UnauthorizedException()
-
-        try:
-            user = User.objects.get(pk=kwargs.get('id'))
-        except User.DoesNotExist:
-            raise NotFoundException()
-
-        if not info.context.user.is_superuser:
-            if user != info.context.user:
-                raise ForbiddenException()
+        user = verify_user(info, kwargs)
 
         update_kwargs = dict(kwargs)
 
@@ -157,17 +150,7 @@ class DeleteUser(graphene.Mutation):
 
     @classmethod
     def mutate(cls, root, info, **kwargs):
-        if not isinstance(info.context.user, User):
-            raise UnauthorizedException()
-
-        try:
-            user = User.objects.get(pk=kwargs.get('id'))
-        except User.DoesNotExist:
-            raise NotFoundException()
-
-        if not info.context.user.is_superuser:
-            if user != info.context.user:
-                raise ForbiddenException()
+        user = verify_user(info, kwargs)
 
         user.delete()
 
