@@ -114,8 +114,7 @@ class DeleteAutoMLJob(graphene.Mutation):
         job.delete()
         if stop_status == "FAILED":
             return DeleteAutoMLJob(status=StatusEnum.FAILED, info="Pod not found on cluster, model has been deleted")
-        else:
-            return DeleteAutoMLJob(status=StatusEnum.SUCCESS, info="Pod and model succesfully deleted")
+        return DeleteAutoMLJob(status=StatusEnum.SUCCESS, info="Pod and model succesfully deleted")
 
 
 class JobMutation(object):

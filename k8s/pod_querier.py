@@ -19,12 +19,9 @@ class PodQuerier(PodOperator):
         elif state_object.terminated is not None:
             if curr_status in {JobStatus.RUNNING, JobStatus.WAITING, JobStatus.FAILED}:
                 return JobStatus.FAILED
-            else:
-                return JobStatus.STOPPED
+            return JobStatus.STOPPED
         elif state_object.waiting is not None:
             if curr_status == JobStatus.RUNNING:
                 return JobStatus.FAILED
-            else:
-                return curr_status
-        else:
-            return JobStatus.FAILED
+            return curr_status
+        return JobStatus.FAILED
